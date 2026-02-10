@@ -73,7 +73,7 @@ class Category(db.Model):
             "no account required",
             "parental-consent",
             "paid license",
-            "non-mcs accounts",
+            "external accounts",
         ]
         if n.lower() in access_keywords or any(
             kw in n.lower() for kw in access_keywords
