@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Software Catalog{% endblock %}
+
+{% block content %}
+<div class="catalog-layout">
+    <!-- Filter Sidebar -->
+    <aside class="filter-sidebar" id="filterSidebar">
+        <button class="filter-close" id="filterClose" aria-label="Close filters">&times;</button>
+        <h2 class="filter-title">Filters</h2>
+
+        <button class="btn btn-sm btn-outline" id="clearFilters">Clear All</button>
+
+        {% for type_key, label in group_meta.items() %}
+            {% if type_key in grouped_categories %}
+            <details class="filter-group" {% if type_key in ('dpa_status', 'cost', 'roster') %}open{% endif %}>
+                <summary class="filter-group-label">{{ label }}</summary>
+                <div class="filter-options">
+                    {% for cat in grouped_categories[type_key] %}
+                    <label class="filter-option">
+                        <input type="checkbox" name="cat" value="{{ cat.id }}" data-type="{{ cat.category_type }}">
+                        <span class="badge badge-{{ cat.category_type }}">{{ cat.name }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </details>
+            {% endif %}
+        {% endfor %}
+    </aside>
+
+    <!-- Main Content -->
+    <div class="catalog-main">
+        <div class="catalog-toolbar">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search software..." autocomplete="off">
+            </div>
+            <button class="btn btn-filter-toggle" id="filterToggle">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                Filters
+            </button>
+            <div class="catalog-count" id="catalogCount"></div>
+        </div>
+
+        <div class="active-filters" id="activeFilters"></div>
+
+        <div class="software-grid" id="softwareGrid">
+            <div class="loading">Loading catalog...</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/catalog.js') }}"></script>
+{% endblock %}

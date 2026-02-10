@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{ software.name }} - Software Catalog{% endblock %}
+
+{% block content %}
+<div class="detail-page">
+    <a href="{{ url_for('catalog.index') }}" class="back-link">&larr; Back to Catalog</a>
+
+    <div class="detail-card">
+        <div class="detail-header">
+            <div class="detail-logo">
+                {% if software.logo %}
+                    <img src="{{ software.logo }}" alt="{{ software.name }} logo"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="logo-placeholder" style="display:none;">{{ software.name[0] }}</div>
+                {% else %}
+                    <div class="logo-placeholder">{{ software.name[0] }}</div>
+                {% endif %}
+            </div>
+            <div class="detail-info">
+                <h1>{{ software.name }}</h1>
+                <p class="detail-tagline">{{ software.tagline }}</p>
+                {% if software.url %}
+                    <a href="{{ software.url }}" target="_blank" rel="noopener" class="btn btn-primary">
+                        Visit Website &rarr;
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if software.content %}
+        <div class="detail-content">
+            <h2>Details</h2>
+            <p>{{ software.content }}</p>
+        </div>
+        {% endif %}
+
+        <div class="detail-categories">
+            <h2>Categories</h2>
+            <div class="badge-list">
+                {% for cat in software.categories|sort(attribute='category_type') %}
+                    <span class="badge badge-{{ cat.category_type }}">{{ cat.name }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

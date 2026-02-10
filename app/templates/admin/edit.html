@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}{% if is_new %}Add{% else %}Edit{% endif %} Software - Admin{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>{% if is_new %}Add Software{% else %}Edit: {{ software.name }}{% endif %}</h1>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline">&larr; Back</a>
+</div>
+
+<form class="admin-form" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="form-group">
+        <label for="name">Name *</label>
+        <input type="text" id="name" name="name" value="{{ software.name if software else '' }}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="url">URL</label>
+        <input type="url" id="url" name="url" value="{{ software.url if software else '' }}" placeholder="https://...">
+    </div>
+
+    <div class="form-group">
+        <label for="tagline">Tagline</label>
+        <input type="text" id="tagline" name="tagline" value="{{ software.tagline if software else '' }}">
+    </div>
+
+    <div class="form-group">
+        <label for="content">Details</label>
+        <textarea id="content" name="content">{{ software.content if software else '' }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="logo">Logo URL</label>
+        <input type="url" id="logo" name="logo" value="{{ software.logo if software else '' }}" placeholder="https://logo.clearbit.com/example.com">
+    </div>
+
+    <div class="form-group">
+        <label class="form-check">
+            <input type="checkbox" name="featured" {% if software and software.featured %}checked{% endif %}>
+            Featured
+        </label>
+    </div>
+
+    <div class="form-group">
+        <label>Categories</label>
+        <div class="category-select">
+            {% set selected_ids = software.categories|map(attribute='id')|list if software else [] %}
+            {% for cat in categories %}
+                <label>
+                    <input type="checkbox" name="categories" value="{{ cat.id }}"
+                           {% if cat.id in selected_ids %}checked{% endif %}>
+                    <span class="badge badge-{{ cat.category_type }}">{{ cat.name }}</span>
+                </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="new_categories">Add New Categories (comma-separated)</label>
+        <input type="text" id="new_categories" name="new_categories" placeholder="e.g., math, Roster:Clever">
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+            {% if is_new %}Add Software{% else %}Save Changes{% endif %}
+        </button>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline">Cancel</a>
+    </div>
+</form>
+{% endblock %}

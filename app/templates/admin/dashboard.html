@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Software Catalog{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>Admin Dashboard</h1>
+    <a href="{{ url_for('admin.add') }}" class="btn btn-primary">+ Add Software</a>
+</div>
+
+<div class="admin-table-wrapper">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Tagline</th>
+                <th>DPA Status</th>
+                <th>Featured</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in software %}
+            <tr>
+                <td><strong>{{ s.name }}</strong></td>
+                <td style="max-width: 300px;">{{ s.tagline[:80] }}{% if s.tagline|length > 80 %}...{% endif %}</td>
+                <td>
+                    {% for c in s.categories if c.category_type == 'dpa_status' %}
+                        <span class="badge badge-dpa_status" data-name="{{ c.name }}">{{ c.name }}</span>
+                    {% endfor %}
+                </td>
+                <td>{% if s.featured %}Yes{% endif %}</td>
+                <td>
+                    <div class="admin-actions">
+                        <a href="{{ url_for('admin.edit', software_id=s.id) }}" class="btn btn-sm btn-outline">Edit</a>
+                        <form method="POST" action="{{ url_for('admin.delete', software_id=s.id) }}"
+                              onsubmit="return confirm('Delete {{ s.name|e }}?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
