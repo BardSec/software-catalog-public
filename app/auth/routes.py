@@ -84,12 +84,14 @@ def callback_google():
     return _handle_login(email, name, "google")
 
 
-@auth_bp.route("/logout")
+@auth_bp.route("/logout", methods=["POST"])
 def logout():
     logout_user()
     session.clear()
     flash("You have been signed out.", "info")
-    return redirect(url_for("auth.login"))
+    resp = redirect(url_for("auth.login"))
+    resp.delete_cookie("remember_token")
+    return resp
 
 
 def _handle_login(email, name, provider):
