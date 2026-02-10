@@ -89,6 +89,18 @@ All configuration is via environment variables in `.env`:
    GOOGLE_CLIENT_SECRET=<client-secret>
    ```
 
+## Custom Login Logo
+
+To display your organization's logo on the login page, place a logo file in `app/static/img/`:
+
+```bash
+cp /path/to/your-logo.png app/static/img/logo.png
+```
+
+Supported filenames: `logo.png`, `logo.svg`, `logo.jpg`, `logo.webp`. The first match found (in that order) will be used. Recommended size is around 200x200px; the image will display at a max height of 80px.
+
+If no logo file is present, the login page displays without one — no configuration needed.
+
 ## Cloudflare Tunnel Setup
 
 This app is designed to sit behind a Cloudflare tunnel for TLS termination.

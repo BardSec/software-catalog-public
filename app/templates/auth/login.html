@@ -5,6 +5,9 @@
 {% block content %}
 <div class="login-page">
     <div class="login-card">
+        {% if login_logo %}
+        <img src="{{ login_logo }}" alt="Logo" class="login-logo">
+        {% endif %}
         <h1>Software Catalog</h1>
         <p>Sign in with your organization account to browse the software catalog.</p>
 
