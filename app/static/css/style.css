@@ -112,6 +112,17 @@ a:hover { text-decoration: underline; }
     color: var(--color-text);
 }
 
+.nav-logout-form {
+    display: inline;
+}
+
+button.nav-logout {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+}
+
 .nav-user {
     font-size: 0.875rem;
     color: var(--color-text-muted);
