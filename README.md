@@ -1,6 +1,6 @@
 # Software Catalog
 
-A searchable, filterable software catalog for school district staff. Provides SSO authentication via Microsoft 365 and Google Workspace, with an admin panel for managing entries.
+A searchable, filterable software catalog web application. Provides SSO authentication via Microsoft 365 and Google Workspace, with an admin panel for managing entries. Designed for school districts and other organizations that need to maintain an approved software directory for staff.
 
 ## Features
 
