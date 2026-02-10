@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timezone
 
 from flask import Blueprint, redirect, url_for, flash, render_template, current_app, session
@@ -16,10 +17,20 @@ def login():
 
     ms_enabled = bool(current_app.config["MICROSOFT_CLIENT_ID"])
     google_enabled = bool(current_app.config["GOOGLE_CLIENT_ID"])
+
+    # Check for a custom logo in static/img/
+    login_logo = None
+    img_dir = os.path.join(current_app.static_folder, "img")
+    for ext in ("png", "svg", "jpg", "webp"):
+        if os.path.isfile(os.path.join(img_dir, f"logo.{ext}")):
+            login_logo = url_for("static", filename=f"img/logo.{ext}")
+            break
+
     return render_template(
         "auth/login.html",
         ms_enabled=ms_enabled,
         google_enabled=google_enabled,
+        login_logo=login_logo,
     )
 
 
