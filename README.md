@@ -13,6 +13,21 @@ A searchable, filterable software catalog web application. Provides SSO authenti
 - **Dark Mode**: Automatic dark mode based on system preference
 - **Docker Deployment**: Single container with SQLite, ready for Cloudflare tunnel
 
+## Pre-Reqs: Gather Before You Begin
+
+- **Microsoft365 of Google Workspace App Registration**: Create an app registration and copy down the following:
+  - Microsoft
+    - Tenant ID
+    - App (Client) ID
+    - Secret Value
+    - Redirect URI
+
+- **Cloudflare Hostname Route**:
+- **Prepare Virtual Machine to Host**: for Cloud Deployments, I use Linode.
+  - Recommended OS: Ubuntu Server 24.04 LTS
+  - Install Cloudflare Tunnel
+  - Install Docker 
+
 ## Quick Start
 
 ### 1. Clone and Configure
