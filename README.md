@@ -15,7 +15,7 @@ A searchable, filterable software catalog web application. Provides SSO authenti
 
 ## Pre-Reqs: Gather Before You Begin
 
-- **Microsoft365 of Google Workspace App Registration**: Create an app registration and copy down the following:
+- **Microsoft365 or Google Workspace App Registration**: Create an app registration and copy down the following:
   - Microsoft
     - Tenant ID
     - App (Client) ID
