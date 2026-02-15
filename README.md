@@ -33,7 +33,7 @@ A searchable, filterable software catalog web application. Provides SSO authenti
 ### 1. Clone and Configure
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/BardSec/software-catalog-public
 cd software-catalog
 cp .env.example .env
 ```
