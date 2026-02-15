@@ -467,17 +467,17 @@ button.nav-logout {
     color: var(--badge-dpa-none);
 }
 
-.badge-dpa_status[data-name^="2-"] {
+.badge-dpa_status[data-name="DPA Expired"] {
     background: var(--badge-dpa-approved-bg);
     color: var(--badge-dpa-approved);
 }
 
-.badge-dpa_status[data-name^="1-"] {
+.badge-dpa_status[data-name="DPA Active"] {
     background: var(--badge-dpa-pending-bg);
     color: var(--badge-dpa-pending);
 }
 
-.badge-dpa_status[data-name^="3-"] {
+.badge-dpa_status[data-name="DPA Refused by Vendor"] {
     background: var(--badge-dpa-declined-bg);
     color: var(--badge-dpa-declined);
 }

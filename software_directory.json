@@ -5,9 +5,9 @@
     "tagline": "A learning management system for delivering and tracking online coursework.",
     "content": "Example LMS provides course hosting, grade tracking, and assignment management for staff and students.",
     "categories": [
-      "1-Active DPA",
-      "$District",
-      "Roster:Clever",
+      "DPA Active",
+      "Paid by District",
+      "Clever",
       "Instructional",
       "LMS"
     ],
@@ -20,8 +20,8 @@
     "tagline": "An assessment platform for screening and progress monitoring in reading and math.",
     "content": "",
     "categories": [
-      "1-Active DPA",
-      "$Free",
+      "DPA Active",
+      "Free Application",
       "assessment",
       "Math",
       "ELA"
@@ -35,9 +35,9 @@
     "tagline": "An interactive math practice and instruction tool for K-8 students.",
     "content": "MathWorld Online offers adaptive practice, video lessons, and real-time progress dashboards.",
     "categories": [
-      "1-Active DPA",
-      "$School",
-      "Roster:ClassLink",
+      "DPA Active",
+      "Paid by School",
+      "ClassLink",
       "Math",
       "Instructional"
     ],
@@ -50,8 +50,8 @@
     "tagline": "A phonics-based reading tool designed for early elementary students.",
     "content": "",
     "categories": [
-      "2-Expired DPA",
-      "$School",
+      "DPA Expired",
+      "Paid by School",
       "ELA",
       "Instructional"
     ],
@@ -64,8 +64,8 @@
     "tagline": "A classroom behavior and communication app connecting teachers, students, and parents.",
     "content": "",
     "categories": [
-      "0-No DPA",
-      "$Free",
+      "DPA Not on File",
+      "Free Application",
       "behavior",
       "communication"
     ],
@@ -78,9 +78,9 @@
     "tagline": "A student data and analytics dashboard for administrators.",
     "content": "DataDash aggregates data from multiple sources to provide at-a-glance analytics on enrollment, attendance, and achievement.",
     "categories": [
-      "1-Active DPA",
-      "$District",
-      "Roster:Clever",
+      "DPA Active",
+      "Paid by District",
+      "Clever",
       "staff only",
       "SIS",
       "data"
@@ -94,8 +94,8 @@
     "tagline": "A digital art and design tool for student creative projects.",
     "content": "",
     "categories": [
-      "0-No DPA",
-      "$Free",
+      "DPA Not on File",
+      "Free Application",
       "art",
       "Instructional",
       "no account required"
@@ -109,8 +109,8 @@
     "tagline": "A secure browser and platform for administering standardized tests.",
     "content": "",
     "categories": [
-      "1-Active DPA",
-      "$District",
+      "DPA Active",
+      "Paid by District",
       "assessment",
       "testing",
       "state testing"
@@ -124,8 +124,8 @@
     "tagline": "An IT helpdesk and asset management platform for school technology departments.",
     "content": "TechTicket provides ticket tracking, device inventory, and self-service portals for staff.",
     "categories": [
-      "3-Vendor Refused",
-      "$District",
+      "DPA Refused by Vendor",
+      "Paid by District",
       "staff only",
       "IT"
     ],
@@ -138,8 +138,8 @@
     "tagline": "A video-based instructional library covering core academic subjects.",
     "content": "",
     "categories": [
-      "1-Active DPA",
-      "$Free",
+      "DPA Active",
+      "Free Application",
       "Instructional",
       "video",
       "parental-consent",

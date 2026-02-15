@@ -60,9 +60,12 @@ class Category(db.Model):
         n = name.strip()
         if n.startswith(("0-", "1-", "2-", "3-", "4-")) or "DPA" in n.upper():
             return "dpa_status"
-        if n.startswith("$"):
+        if n.startswith("$") or n in (
+            "Paid by District", "Paid by School", "Paid by Individuals",
+            "Free Application",
+        ):
             return "cost"
-        if n.startswith("Roster:"):
+        if n.startswith("Roster:") or n in ("ClassLink", "Clever"):
             return "roster"
         if n.startswith("#"):
             return "status"
