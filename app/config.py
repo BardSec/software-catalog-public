@@ -5,7 +5,9 @@ _WEAK_KEYS = {"dev-secret-change-me", "change-me", "secret", ""}
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-change-me")
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///catalog.db")
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        "DATABASE_URL", f"sqlite:///{_DEFAULT_DB_PATH}"
+    )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Cookie security

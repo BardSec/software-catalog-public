@@ -92,9 +92,34 @@ class User(UserMixin, db.Model):
     provider = db.Column(db.String(50), default="")  # "microsoft" or "google"
     is_admin = db.Column(db.Boolean, default=False)
     last_login = db.Column(db.DateTime)
+    failed_login_attempts = db.Column(db.Integer, default=0)
+    locked_until = db.Column(db.DateTime)
+
+    @property
+    def is_locked(self):
+        if self.locked_until is None:
+            return False
+        return datetime.now(timezone.utc) < self.locked_until
 
     def __repr__(self):
         return f"<User {self.email}>"
+
+
+class AuditLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    action = db.Column(db.String(50), nullable=False)
+    resource_type = db.Column(db.String(50), nullable=False)
+    resource_id = db.Column(db.Integer)
+    details = db.Column(db.Text, default="")
+    timestamp = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone.utc)
+    )
+
+    user = db.relationship("User")
+
+    def __repr__(self):
+        return f"<AuditLog {self.action} {self.resource_type} by user {self.user_id}>"
 
 
 @login_manager.user_loader
