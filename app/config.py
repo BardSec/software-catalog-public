@@ -2,11 +2,6 @@ import os
 
 _WEAK_KEYS = {"dev-secret-change-me", "change-me", "secret", ""}
 
-# Default database path outside the static/template directories
-_DEFAULT_DB_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "instance", "catalog.db"
-)
-
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-change-me")
