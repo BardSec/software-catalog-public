@@ -51,6 +51,7 @@ def callback_microsoft():
                 token=token,
             ).json()
     except Exception:
+        current_app.logger.warning("Microsoft OAuth callback failed")
         flash("Microsoft sign-in failed. Please try again.", "error")
         return redirect(url_for("auth.login"))
 
@@ -76,6 +77,7 @@ def callback_google():
                 token=token,
             ).json()
     except Exception:
+        current_app.logger.warning("Google OAuth callback failed")
         flash("Google sign-in failed. Please try again.", "error")
         return redirect(url_for("auth.login"))
 
@@ -105,6 +107,7 @@ def _handle_login(email, name, provider):
     if allowed:
         domain = email.split("@")[-1]
         if domain not in allowed:
+            current_app.logger.warning(f"Domain rejected: {email} via {provider}")
             flash("Your email domain is not authorized to access this application.", "error")
             return redirect(url_for("auth.login"))
 
@@ -123,5 +126,6 @@ def _handle_login(email, name, provider):
 
     db.session.commit()
     login_user(user, remember=True)
+    current_app.logger.info(f"Login: {email} via {provider}")
 
     return redirect(url_for("catalog.index"))

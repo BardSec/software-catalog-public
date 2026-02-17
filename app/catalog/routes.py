@@ -53,6 +53,10 @@ def api_software():
         )
 
     if category_ids:
+        valid_ids = {
+            c.id for c in Category.query.filter(Category.id.in_(category_ids)).all()
+        }
+        category_ids = [cid for cid in category_ids if cid in valid_ids]
         for cat_id in category_ids:
             query = query.filter(
                 Software.categories.any(Category.id == cat_id)

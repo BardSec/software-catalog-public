@@ -1,10 +1,24 @@
 import os
 
+_WEAK_KEYS = {"dev-secret-change-me", "change-me", "secret", ""}
+
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-change-me")
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///catalog.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # Cookie security
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Lax"
+    REMEMBER_COOKIE_HTTPONLY = True
+    REMEMBER_COOKIE_SAMESITE = "Lax"
+    REMEMBER_COOKIE_DURATION = 604800  # 7 days
+
+    # Enable Secure flag when a real secret is configured (i.e. production)
+    _secure = SECRET_KEY not in _WEAK_KEYS
+    SESSION_COOKIE_SECURE = _secure
+    REMEMBER_COOKIE_SECURE = _secure
 
     # Microsoft OIDC
     MICROSOFT_CLIENT_ID = os.environ.get("MICROSOFT_CLIENT_ID", "")
