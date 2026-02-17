@@ -14,6 +14,11 @@ from app.models import AuditLog, Software, Category
 admin_bp = Blueprint("admin", __name__)
 
 _BLOCKED_HOSTNAMES = {"localhost", "metadata.google.internal"}
+_MAX_NAME = 200
+_MAX_URL = 500
+_MAX_TAGLINE = 500
+_MAX_CONTENT = 50000
+_MAX_CATEGORY_NAME = 100
 
 
 def _is_safe_url(url):
@@ -53,6 +58,27 @@ def _is_safe_url(url):
         return False
 
 
+def _validate_software_fields(software):
+    """Return an error message string if any field is invalid, or None if OK."""
+    if not software.name:
+        return "Name is required."
+    if len(software.name) > _MAX_NAME:
+        return f"Name must be {_MAX_NAME} characters or less."
+    if len(software.url) > _MAX_URL:
+        return f"URL must be {_MAX_URL} characters or less."
+    if len(software.tagline) > _MAX_TAGLINE:
+        return f"Tagline must be {_MAX_TAGLINE} characters or less."
+    if len(software.content) > _MAX_CONTENT:
+        return f"Content must be {_MAX_CONTENT} characters or less."
+    if len(software.logo) > _MAX_URL:
+        return f"Logo URL must be {_MAX_URL} characters or less."
+    if not _is_safe_url(software.url):
+        return "URL must use http:// or https://."
+    if not _is_safe_url(software.logo):
+        return "Logo URL must use http:// or https://."
+    return None
+
+
 def admin_required(f):
     @wraps(f)
     @login_required
@@ -85,16 +111,9 @@ def add():
             featured="featured" in request.form,
         )
 
-        if not software.name:
-            flash("Name is required.", "error")
-            return render_template("admin/edit.html", software=software, categories=categories, is_new=True)
-
-        if not _is_safe_url(software.url):
-            flash("URL must use http:// or https://.", "error")
-            return render_template("admin/edit.html", software=software, categories=categories, is_new=True)
-
-        if not _is_safe_url(software.logo):
-            flash("Logo URL must use http:// or https://.", "error")
+        err = _validate_software_fields(software)
+        if err:
+            flash(err, "error")
             return render_template("admin/edit.html", software=software, categories=categories, is_new=True)
 
         # Handle categories
@@ -108,6 +127,9 @@ def add():
                 cat_name = cat_name.strip()
                 if not cat_name:
                     continue
+                if len(cat_name) > _MAX_CATEGORY_NAME:
+                    flash(f"Category name must be {_MAX_CATEGORY_NAME} characters or less.", "error")
+                    return render_template("admin/edit.html", software=software, categories=categories, is_new=True)
                 existing = Category.query.filter_by(name=cat_name).first()
                 if existing:
                     if existing not in software.categories:
@@ -146,16 +168,9 @@ def edit(software_id):
         software.logo = request.form.get("logo", "").strip()
         software.featured = "featured" in request.form
 
-        if not software.name:
-            flash("Name is required.", "error")
-            return render_template("admin/edit.html", software=software, categories=categories, is_new=False)
-
-        if not _is_safe_url(software.url):
-            flash("URL must use http:// or https://.", "error")
-            return render_template("admin/edit.html", software=software, categories=categories, is_new=False)
-
-        if not _is_safe_url(software.logo):
-            flash("Logo URL must use http:// or https://.", "error")
+        err = _validate_software_fields(software)
+        if err:
+            flash(err, "error")
             return render_template("admin/edit.html", software=software, categories=categories, is_new=False)
 
         selected_ids = request.form.getlist("categories", type=int)
@@ -168,6 +183,9 @@ def edit(software_id):
                 cat_name = cat_name.strip()
                 if not cat_name:
                     continue
+                if len(cat_name) > _MAX_CATEGORY_NAME:
+                    flash(f"Category name must be {_MAX_CATEGORY_NAME} characters or less.", "error")
+                    return render_template("admin/edit.html", software=software, categories=categories, is_new=False)
                 existing = Category.query.filter_by(name=cat_name).first()
                 if existing:
                     if existing not in software.categories:
@@ -299,7 +317,7 @@ def import_backup():
 
         for cat_name in entry.get("categories", []):
             cat_name = cat_name.strip()
-            if not cat_name:
+            if not cat_name or len(cat_name) > _MAX_CATEGORY_NAME:
                 continue
             if cat_name not in category_cache:
                 cat = Category(name=cat_name, category_type=Category.classify(cat_name))
