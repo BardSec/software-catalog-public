@@ -1,7 +1,9 @@
+import json
+from datetime import datetime, timezone
 from functools import wraps
 from urllib.parse import urlparse
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, Response
 from flask_login import login_required, current_user
 
 from app import db
@@ -156,4 +158,113 @@ def delete(software_id):
     db.session.commit()
     current_app.logger.info(f'Admin {current_user.email} deleted software "{name}"')
     flash(f'"{name}" has been deleted.', "success")
+    return redirect(url_for("admin.dashboard"))
+
+
+@admin_bp.route("/export")
+@admin_required
+def export_backup():
+    """Export all software entries as a JSON backup file."""
+    software_list = Software.query.order_by(Software.name).all()
+    data = []
+    for s in software_list:
+        data.append({
+            "name": s.name,
+            "url": s.url or "",
+            "tagline": s.tagline or "",
+            "content": s.content or "",
+            "logo": s.logo or "",
+            "featured": s.featured,
+            "categories": [c.name for c in s.categories],
+        })
+
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    filename = f"software-catalog-backup-{timestamp}.json"
+    json_str = json.dumps(data, indent=2, ensure_ascii=False)
+
+    return Response(
+        json_str,
+        mimetype="application/json",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@admin_bp.route("/import", methods=["POST"])
+@admin_required
+def import_backup():
+    """Import software entries from a JSON backup file."""
+    file = request.files.get("backup_file")
+    if not file or not file.filename:
+        flash("No file selected.", "error")
+        return redirect(url_for("admin.dashboard"))
+
+    try:
+        data = json.load(file)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        flash("Invalid JSON file.", "error")
+        return redirect(url_for("admin.dashboard"))
+
+    if not isinstance(data, list):
+        flash("Invalid backup format: expected a JSON array.", "error")
+        return redirect(url_for("admin.dashboard"))
+
+    mode = request.form.get("import_mode", "merge")
+
+    if mode == "replace":
+        # Clear all existing data
+        db.session.execute(db.text("DELETE FROM software_categories"))
+        Software.query.delete()
+        Category.query.delete()
+        db.session.flush()
+
+    category_cache = {c.name: c for c in Category.query.all()}
+    existing_names = {s.name for s in Software.query.all()} if mode == "merge" else set()
+    added = 0
+    skipped = 0
+
+    for entry in data:
+        if not isinstance(entry, dict):
+            continue
+        name = entry.get("name", "").strip()
+        if not name:
+            continue
+
+        if mode == "merge" and name in existing_names:
+            skipped += 1
+            continue
+
+        software = Software(
+            name=name,
+            url=entry.get("url", "").strip(),
+            tagline=entry.get("tagline", "").strip(),
+            content=entry.get("content", "").strip(),
+            logo=entry.get("logo", "").strip(),
+            featured=bool(entry.get("featured", False)),
+        )
+        db.session.add(software)
+
+        for cat_name in entry.get("categories", []):
+            cat_name = cat_name.strip()
+            if not cat_name:
+                continue
+            if cat_name not in category_cache:
+                cat = Category(name=cat_name, category_type=Category.classify(cat_name))
+                db.session.add(cat)
+                db.session.flush()
+                category_cache[cat_name] = cat
+            software.categories.append(category_cache[cat_name])
+
+        existing_names.add(name)
+        added += 1
+
+    db.session.commit()
+
+    if mode == "replace":
+        flash(f"Replaced catalog with {added} entries from backup.", "success")
+    else:
+        msg = f"Imported {added} new entries."
+        if skipped:
+            msg += f" Skipped {skipped} duplicates."
+        flash(msg, "success")
+
     return redirect(url_for("admin.dashboard"))
