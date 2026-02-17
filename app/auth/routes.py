@@ -141,6 +141,9 @@ def _handle_login(email, name, provider):
     user.is_admin = email in admin_emails
 
     db.session.commit()
+
+    # Regenerate session to prevent session fixation
+    session.clear()
     login_user(user, remember=True)
     current_app.logger.info(f"Login: {email} via {provider}")
 

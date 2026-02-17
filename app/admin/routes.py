@@ -96,8 +96,9 @@ def add():
             featured="featured" in request.form,
         )
 
-        if not software.name:
-            flash("Name is required.", "error")
+        err = _validate_software_fields(software)
+        if err:
+            flash(err, "error")
             return render_template("admin/edit.html", software=software, categories=categories, is_new=True)
 
         if not _is_safe_url(software.url):
@@ -119,6 +120,9 @@ def add():
                 cat_name = cat_name.strip()
                 if not cat_name:
                     continue
+                if len(cat_name) > _MAX_CATEGORY_NAME:
+                    flash(f"Category name must be {_MAX_CATEGORY_NAME} characters or less.", "error")
+                    return render_template("admin/edit.html", software=software, categories=categories, is_new=True)
                 existing = Category.query.filter_by(name=cat_name).first()
                 if existing:
                     if existing not in software.categories:
@@ -157,8 +161,9 @@ def edit(software_id):
         software.logo = request.form.get("logo", "").strip()
         software.featured = "featured" in request.form
 
-        if not software.name:
-            flash("Name is required.", "error")
+        err = _validate_software_fields(software)
+        if err:
+            flash(err, "error")
             return render_template("admin/edit.html", software=software, categories=categories, is_new=False)
 
         if not _is_safe_url(software.url):
@@ -179,6 +184,9 @@ def edit(software_id):
                 cat_name = cat_name.strip()
                 if not cat_name:
                     continue
+                if len(cat_name) > _MAX_CATEGORY_NAME:
+                    flash(f"Category name must be {_MAX_CATEGORY_NAME} characters or less.", "error")
+                    return render_template("admin/edit.html", software=software, categories=categories, is_new=False)
                 existing = Category.query.filter_by(name=cat_name).first()
                 if existing:
                     if existing not in software.categories:
@@ -310,7 +318,7 @@ def import_backup():
 
         for cat_name in entry.get("categories", []):
             cat_name = cat_name.strip()
-            if not cat_name:
+            if not cat_name or len(cat_name) > _MAX_CATEGORY_NAME:
                 continue
             if cat_name not in category_cache:
                 cat = Category(name=cat_name, category_type=Category.classify(cat_name))
