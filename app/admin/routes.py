@@ -53,6 +53,17 @@ def _is_safe_url(url):
         return False
 
 
+def _is_safe_url(url):
+    """Return True if url uses http or https scheme (or is empty)."""
+    if not url:
+        return True
+    try:
+        scheme = urlparse(url).scheme.lower()
+        return scheme in ("http", "https")
+    except Exception:
+        return False
+
+
 def admin_required(f):
     @wraps(f)
     @login_required

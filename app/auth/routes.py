@@ -115,7 +115,6 @@ def _handle_login(email, name, provider):
         domain = email.split("@")[-1]
         if domain not in allowed:
             current_app.logger.warning(f"Domain rejected: {email} via {provider}")
-            _record_failed_login(email)
             flash("Your email domain is not authorized to access this application.", "error")
             return redirect(url_for("auth.login"))
 
