@@ -1,12 +1,24 @@
 from functools import wraps
+from urllib.parse import urlparse
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, current_app
 from flask_login import login_required, current_user
 
 from app import db
 from app.models import Software, Category
 
 admin_bp = Blueprint("admin", __name__)
+
+
+def _is_safe_url(url):
+    """Return True if url uses http or https scheme (or is empty)."""
+    if not url:
+        return True
+    try:
+        scheme = urlparse(url).scheme.lower()
+        return scheme in ("http", "https")
+    except Exception:
+        return False
 
 
 def admin_required(f):
@@ -45,6 +57,14 @@ def add():
             flash("Name is required.", "error")
             return render_template("admin/edit.html", software=software, categories=categories, is_new=True)
 
+        if not _is_safe_url(software.url):
+            flash("URL must use http:// or https://.", "error")
+            return render_template("admin/edit.html", software=software, categories=categories, is_new=True)
+
+        if not _is_safe_url(software.logo):
+            flash("Logo URL must use http:// or https://.", "error")
+            return render_template("admin/edit.html", software=software, categories=categories, is_new=True)
+
         # Handle categories
         selected_ids = request.form.getlist("categories", type=int)
         software.categories = Category.query.filter(Category.id.in_(selected_ids)).all()
@@ -67,6 +87,7 @@ def add():
 
         db.session.add(software)
         db.session.commit()
+        current_app.logger.info(f'Admin {current_user.email} added software "{software.name}"')
         flash(f'"{software.name}" has been added.', "success")
         return redirect(url_for("admin.dashboard"))
 
@@ -91,6 +112,14 @@ def edit(software_id):
             flash("Name is required.", "error")
             return render_template("admin/edit.html", software=software, categories=categories, is_new=False)
 
+        if not _is_safe_url(software.url):
+            flash("URL must use http:// or https://.", "error")
+            return render_template("admin/edit.html", software=software, categories=categories, is_new=False)
+
+        if not _is_safe_url(software.logo):
+            flash("Logo URL must use http:// or https://.", "error")
+            return render_template("admin/edit.html", software=software, categories=categories, is_new=False)
+
         selected_ids = request.form.getlist("categories", type=int)
         software.categories = Category.query.filter(Category.id.in_(selected_ids)).all()
 
@@ -111,6 +140,7 @@ def edit(software_id):
                     software.categories.append(cat)
 
         db.session.commit()
+        current_app.logger.info(f'Admin {current_user.email} edited software "{software.name}"')
         flash(f'"{software.name}" has been updated.', "success")
         return redirect(url_for("admin.dashboard"))
 
@@ -124,5 +154,6 @@ def delete(software_id):
     name = software.name
     db.session.delete(software)
     db.session.commit()
+    current_app.logger.info(f'Admin {current_user.email} deleted software "{name}"')
     flash(f'"{name}" has been deleted.', "success")
     return redirect(url_for("admin.dashboard"))
