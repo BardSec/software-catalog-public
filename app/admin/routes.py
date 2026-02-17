@@ -1,24 +1,54 @@
+import ipaddress
 import json
+import socket
 from datetime import datetime, timezone
 from functools import wraps
 from urllib.parse import urlparse
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, Response
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, Response, current_app
 from flask_login import login_required, current_user
 
 from app import db
-from app.models import Software, Category
+from app.models import AuditLog, Software, Category
 
 admin_bp = Blueprint("admin", __name__)
 
+_BLOCKED_HOSTNAMES = {"localhost", "metadata.google.internal"}
+
 
 def _is_safe_url(url):
-    """Return True if url uses http or https scheme (or is empty)."""
+    """Return True if url uses http/https and does not point to internal networks."""
     if not url:
         return True
     try:
-        scheme = urlparse(url).scheme.lower()
-        return scheme in ("http", "https")
+        parsed = urlparse(url)
+        if parsed.scheme.lower() not in ("http", "https"):
+            return False
+
+        hostname = parsed.hostname
+        if not hostname:
+            return False
+
+        if hostname in _BLOCKED_HOSTNAMES:
+            return False
+
+        # Check for IP addresses pointing to private/reserved ranges
+        try:
+            addr = ipaddress.ip_address(hostname)
+            if addr.is_private or addr.is_loopback or addr.is_link_local or addr.is_reserved:
+                return False
+        except ValueError:
+            # Not an IP literal — resolve the hostname and check
+            try:
+                resolved = socket.getaddrinfo(hostname, None, socket.AF_UNSPEC, socket.SOCK_STREAM)
+                for _, _, _, _, sockaddr in resolved:
+                    addr = ipaddress.ip_address(sockaddr[0])
+                    if addr.is_private or addr.is_loopback or addr.is_link_local or addr.is_reserved:
+                        return False
+            except socket.gaierror:
+                pass  # DNS failure is fine — URL just won't load
+
+        return True
     except Exception:
         return False
 
@@ -88,6 +118,12 @@ def add():
                     software.categories.append(cat)
 
         db.session.add(software)
+        db.session.flush()
+        db.session.add(AuditLog(
+            user_id=current_user.id, action="add",
+            resource_type="software", resource_id=software.id,
+            details=software.name,
+        ))
         db.session.commit()
         current_app.logger.info(f'Admin {current_user.email} added software "{software.name}"')
         flash(f'"{software.name}" has been added.', "success")
@@ -141,6 +177,11 @@ def edit(software_id):
                     db.session.add(cat)
                     software.categories.append(cat)
 
+        db.session.add(AuditLog(
+            user_id=current_user.id, action="edit",
+            resource_type="software", resource_id=software.id,
+            details=software.name,
+        ))
         db.session.commit()
         current_app.logger.info(f'Admin {current_user.email} edited software "{software.name}"')
         flash(f'"{software.name}" has been updated.', "success")
@@ -154,6 +195,11 @@ def edit(software_id):
 def delete(software_id):
     software = db.get_or_404(Software, software_id)
     name = software.name
+    db.session.add(AuditLog(
+        user_id=current_user.id, action="delete",
+        resource_type="software", resource_id=software_id,
+        details=name,
+    ))
     db.session.delete(software)
     db.session.commit()
     current_app.logger.info(f'Admin {current_user.email} deleted software "{name}"')
@@ -233,12 +279,20 @@ def import_backup():
             skipped += 1
             continue
 
+        entry_url = entry.get("url", "").strip()
+        entry_logo = entry.get("logo", "").strip()
+        # Sanitize URLs from imported data
+        if not _is_safe_url(entry_url):
+            entry_url = ""
+        if not _is_safe_url(entry_logo):
+            entry_logo = ""
+
         software = Software(
             name=name,
-            url=entry.get("url", "").strip(),
+            url=entry_url,
             tagline=entry.get("tagline", "").strip(),
             content=entry.get("content", "").strip(),
-            logo=entry.get("logo", "").strip(),
+            logo=entry_logo,
             featured=bool(entry.get("featured", False)),
         )
         db.session.add(software)
@@ -257,7 +311,14 @@ def import_backup():
         existing_names.add(name)
         added += 1
 
+    db.session.add(AuditLog(
+        user_id=current_user.id, action="import",
+        resource_type="software", details=f"mode={mode}, added={added}, skipped={skipped}",
+    ))
     db.session.commit()
+    current_app.logger.info(
+        f'Admin {current_user.email} imported backup: mode={mode}, added={added}, skipped={skipped}'
+    )
 
     if mode == "replace":
         flash(f"Replaced catalog with {added} entries from backup.", "success")
