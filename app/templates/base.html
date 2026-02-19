@@ -10,6 +10,15 @@
             var t = localStorage.getItem('theme');
             if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
         })();
+        function toggleTheme() {
+            var html = document.documentElement;
+            var current = html.getAttribute('data-theme');
+            var isDark = current === 'dark' ||
+                (!current && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            var next = isDark ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+        }
     </script>
     {% block head %}{% endblock %}
 </head>
@@ -53,16 +62,5 @@
     </main>
 
     {% block scripts %}{% endblock %}
-    <script>
-        function toggleTheme() {
-            var html = document.documentElement;
-            var current = html.getAttribute('data-theme');
-            var isDark = current === 'dark' ||
-                (!current && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            var next = isDark ? 'light' : 'dark';
-            html.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-        }
-    </script>
 </body>
 </html>
