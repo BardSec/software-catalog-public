@@ -20,11 +20,18 @@
             <div class="detail-info">
                 <h1>{{ software.name }}</h1>
                 <p class="detail-tagline">{{ software.tagline }}</p>
-                {% if software.url %}
-                    <a href="{{ software.url }}" target="_blank" rel="noopener" class="btn btn-primary">
-                        Visit Website &rarr;
-                    </a>
-                {% endif %}
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+                    {% if software.url %}
+                        <a href="{{ software.url }}" target="_blank" rel="noopener" class="btn btn-primary">
+                            Visit Website &rarr;
+                        </a>
+                    {% endif %}
+                    {% if current_user.is_admin %}
+                        <a href="{{ url_for('admin.edit', software_id=software.id) }}" class="btn btn-outline">
+                            Edit
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
 
