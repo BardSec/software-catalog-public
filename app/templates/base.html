@@ -19,10 +19,6 @@
             html.setAttribute('data-theme', next);
             localStorage.setItem('theme', next);
         }
-        document.addEventListener('DOMContentLoaded', function () {
-            var btn = document.querySelector('.theme-toggle');
-            if (btn) btn.addEventListener('click', toggleTheme);
-        });
     </script>
     {% block head %}{% endblock %}
 </head>
