@@ -35,8 +35,9 @@
     --radius-sm: 4px;
 }
 
+/* Dark mode: system preference (skipped when user manually picked light) */
 @media (prefers-color-scheme: dark) {
-    :root {
+    html:not([data-theme="light"]) {
         --color-bg: #0f172a;
         --color-surface: #1e293b;
         --color-text: #f1f5f9;
@@ -54,6 +55,26 @@
         --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
         --shadow-md: 0 4px 6px rgba(0,0,0,0.3);
     }
+}
+
+/* Dark mode: manual override */
+html[data-theme="dark"] {
+    --color-bg: #0f172a;
+    --color-surface: #1e293b;
+    --color-text: #f1f5f9;
+    --color-text-muted: #94a3b8;
+    --color-border: #334155;
+    --badge-dpa-approved-bg: #064e3b;
+    --badge-dpa-pending-bg: #78350f;
+    --badge-dpa-declined-bg: #7f1d1d;
+    --badge-dpa-none-bg: #374151;
+    --badge-cost-bg: #1e3a5f;
+    --badge-roster-bg: #3b1f6e;
+    --badge-access-bg: #7c2d12;
+    --badge-status-bg: #374151;
+    --badge-other-bg: #374151;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.3);
 }
 
 /* ===== Reset & Base ===== */
@@ -121,6 +142,35 @@ button.nav-logout {
     border: none;
     cursor: pointer;
     font: inherit;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.5rem;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-muted);
+    transition: background 0.15s, color 0.15s;
+}
+.theme-toggle:hover {
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+/* Default (light): show moon; dark: show sun */
+.icon-sun { display: none; }
+.icon-moon { display: block; }
+
+html[data-theme="dark"] .icon-sun { display: block; }
+html[data-theme="dark"] .icon-moon { display: none; }
+
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme="light"]) .icon-sun { display: block; }
+    html:not([data-theme="light"]) .icon-moon { display: none; }
 }
 
 .nav-user {
