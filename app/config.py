@@ -1,6 +1,7 @@
 import os
 
 _WEAK_KEYS = {"dev-secret-change-me", "change-me", "secret", ""}
+_DEFAULT_DB_PATH = "/app/instance/catalog.db"
 
 
 class Config:
