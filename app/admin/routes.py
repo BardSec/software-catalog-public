@@ -14,6 +14,7 @@ from app.models import AuditLog, Software, Category
 admin_bp = Blueprint("admin", __name__)
 
 _BLOCKED_HOSTNAMES = {"localhost", "metadata.google.internal"}
+_MAX_CATEGORY_NAME = 200
 
 
 def _is_safe_url(url):

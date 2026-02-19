@@ -56,7 +56,7 @@ def callback_microsoft():
                 token=token,
             ).json()
     except Exception:
-        current_app.logger.warning("Microsoft OAuth callback failed")
+        current_app.logger.warning("Microsoft OAuth callback failed", exc_info=True)
         flash("Microsoft sign-in failed. Please try again.", "error")
         return redirect(url_for("auth.login"))
 
