@@ -12,6 +12,8 @@ A searchable, filterable software catalog web application. Provides SSO authenti
 - **Responsive Design**: Works on desktop and mobile devices
 - **Dark Mode**: Automatic dark mode based on system preference
 - **Docker Deployment**: Single container with SQLite, ready for Cloudflare tunnel
+- **Export**: Export a JSON of all software in the catalog
+- **Import**: Import a JSON to populate the catalog. Imports can replace existing entries, or merge with existing entries.
 
 ## Pre-Reqs: Gather Before You Begin
 
