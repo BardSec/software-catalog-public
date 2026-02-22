@@ -87,7 +87,7 @@ All configuration is via environment variables in `.env`:
    - Supported account types: **Single tenant** (your org only)
    - Redirect URI: **Web** > `https://your-domain.com/callback/microsoft`
 3. Note the **Application (client) ID** and **Directory (tenant) ID**
-4. Go to **Certificates & secrets** > **New client secret** > copy the value
+4. Go to **Certificates & secrets** > **New client secret** > copy the secret value (you don't need the secret ID)
 5. Go to **API permissions** > ensure `openid`, `email`, `profile` are granted
 6. Add values to `.env`:
    ```
@@ -155,3 +155,9 @@ docker compose restart catalog
 - **Frontend**: Jinja2 templates, vanilla JavaScript
 - **Server**: Gunicorn
 - **Deployment**: Docker
+
+## Known Issues
+- **Dark Mode**: This has been finicky so far... still tweaking.
+
+## Pro Tip
+- If editing in the GUI is a little slow for you. When you first spin up Software Catalog, there are a handful of sample software cards entered as placeholders. If you go to the admin panel and choose Export it will export a JSON file of those 10 pieces of software. For me, if I'm entering a ton of these in bulk, it goes MUCH faster to just manually edit the JSON, then re-import it from the admin panel. When you import, you can choose whether to dump all current cards and reinstall the new ones, OR you can choose to merge the new JSON with the existing. 
