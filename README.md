@@ -21,6 +21,11 @@ A searchable, filterable software catalog web application. Provides SSO authenti
     - App (Client) ID
     - Secret Value
     - Redirect URI
+   
+- **Create Flask Secret Key for .Env file**:
+```bash
+openssl rand -hex 32
+```
 
 - **Cloudflare Hostname Route**: More details [in this previous article](https://www.edtechirl.com/p/using-cloudflare-to-expose-local). 
 - **Prepare Virtual Machine to Host**: for Cloud Deployments, I use Linode.
