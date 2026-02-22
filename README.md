@@ -24,9 +24,9 @@ A searchable, filterable software catalog web application. Provides SSO authenti
 
 - **Cloudflare Hostname Route**: More details [in this previous article](https://www.edtechirl.com/p/using-cloudflare-to-expose-local). 
 - **Prepare Virtual Machine to Host**: for Cloud Deployments, I use Linode.
-  - Recommended OS: Ubuntu Server 24.04 LTS
-  - Install Cloudflare Tunnel
-  - Install Docker 
+  - Recommended OS: [Ubuntu Server 24.04 LTS](https://ubuntu.com/download/server_) (Or current LTS at time of install)
+  - [Install Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/get-started/create-remote-tunnel/)
+  - [Install Docker](https://docs.docker.com/engine/install/ubuntu/) 
 
 ## Quick Start
 
