@@ -22,7 +22,7 @@ A searchable, filterable software catalog web application. Provides SSO authenti
     - Secret Value
     - Redirect URI
 
-- **Cloudflare Hostname Route**:
+- **Cloudflare Hostname Route**: More details [in this previous article](https://www.edtechirl.com/p/using-cloudflare-to-expose-local). 
 - **Prepare Virtual Machine to Host**: for Cloud Deployments, I use Linode.
   - Recommended OS: Ubuntu Server 24.04 LTS
   - Install Cloudflare Tunnel
