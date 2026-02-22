@@ -34,7 +34,7 @@ A searchable, filterable software catalog web application. Provides SSO authenti
 
 ```bash
 git clone https://github.com/BardSec/software-catalog-public
-cd software-catalog
+cd software-catalog-public
 cp .env.example .env
 ```
 
