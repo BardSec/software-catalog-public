@@ -53,8 +53,8 @@ The app will:
 
 ### 3. Access
 
-- Catalog: `http://localhost:5000`
-- Admin: `http://localhost:5000/admin` (requires admin email)
+- Catalog: `http://<serverIP>:5000`
+- Admin: `http://<serverIP>:5000/admin` (requires admin email as configured in the .env file)... For what it's worth, you don't need to use the separate admin subdirectory for Admin access. If you are configured as an admin, there will be an Admin button in the regular UI.
 
 ## Configuration
 
@@ -118,12 +118,12 @@ If no logo file is present, the login page displays without one — no configura
 
 ## Cloudflare Tunnel Setup
 
-This app is designed to sit behind a Cloudflare tunnel for TLS termination.
+This app is designed to sit behind a Cloudflare tunnel for TLS termination. The basic steps:
 
-1. Install `cloudflared` on your VPS
-2. Create a tunnel: `cloudflared tunnel create software-catalog`
-3. Configure the tunnel to route your hostname to `http://localhost:5000`
-4. Update your OAuth redirect URIs to use your Cloudflare hostname
+1. Install `cloudflared` on your VPS (instructions inside of Cloudflare -> Zero Trust -> Networks -> Connectors)
+2. Create a tunnel
+3. Configure the tunnel to route your hostname to `http://<serverIP>:5000`
+4. Update your OAuth redirect URIs to use your Cloudflare hostname (I usually configure this from the beginning, because Azure really like TLS encryption for redirect URIs). 
 
 ## Management Commands
 
